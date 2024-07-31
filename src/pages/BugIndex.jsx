@@ -4,28 +4,30 @@ import { BugList } from '../cmps/BugList.jsx'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { PDFDocument, rgb } from 'pdf-lib'
+import { Select } from 'antd';
 
 export function BugIndex() {
   const [bugs, setBugs] = useState([])
   const [filteredBugs, setFilteredBugs] = useState([])
   const [search, setSearch] = useState('')
   const [severity, setSeverity] = useState('')
-
+  const [createdAt, setCreatedAt] = useState('')
+  const [sortBy, setSortBy] = useState('')
+  const [totalBugs, setTotalBugs] = useState(0)
+  const [isPaginated, setIsPaginated] = useState(false)
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(5)
+  const [labels, setLabels] = useState([])
+  const [selectedLabels, setSelectedLabels] = useState([])
   useEffect(() => {
     loadBugs()
   }, [])
 
   useEffect(() => {
-    if (search !== '') {
-      setFilteredBugs(bugs.filter(bug => bug.title.toLowerCase().includes(search.toLowerCase())))
-    } else {
-      setFilteredBugs(bugs)
-    }
-
-    if (severity !== '') {
-      setFilteredBugs(filteredBugs.filter(bug => bug.severity === +severity))
-    }
-  }, [search, severity])
+    const filterBy = { severity, title: search, createdAt, sortBy, page, isPaginated, labels: selectedLabels }
+    console.log(filterBy)
+    loadBugs(filterBy)
+  }, [search, severity, createdAt, sortBy, page, isPaginated, selectedLabels])
 
   function onSearch(ev) {
     setSearch(ev.target.value)
@@ -35,8 +37,35 @@ export function BugIndex() {
     setSeverity(ev.target.value)
   }
 
-  async function loadBugs() {
-    const bugs = await bugService.query()
+  function onFilterByCreatedAt(ev) {
+    setCreatedAt(ev.target.value)
+  }
+
+  function onSelectFilter(value) {
+    setSortBy(value)
+  }
+
+  function onChangePage(ev) {
+    if (ev === 'next' && page < Math.ceil(totalBugs / pageSize)) {
+      setPage(page + 1)
+    } else if (ev === 'prev' && page > 1) {
+      setPage(page - 1)
+    }
+  }
+
+  function onSelectLabel(values) {
+    console.log('values', values)
+    setSelectedLabels(values);
+  };
+
+  async function loadBugs(filterBy = {}) {
+    console.log('filterBy', filterBy)
+    const data = await bugService.query(filterBy)
+    console.log('data', data)
+    const bugs = data.bugs
+    setLabels(data.labels)
+    setTotalBugs(data.totalBugs)
+    setPageSize(data.pageSize)
     setBugs(bugs)
     setFilteredBugs(bugs)
   }
@@ -57,7 +86,9 @@ export function BugIndex() {
     const bug = {
       title: prompt('Bug title?'),
       severity: +prompt('Bug severity?'),
-      description: prompt('Bug description?')
+      description: prompt('Bug description?'),
+      createdAt: new Date(),
+      labels: []
     }
     try {
       const savedBug = await bugService.save(bug)
@@ -86,6 +117,7 @@ export function BugIndex() {
       showErrorMsg('Cannot update bug')
     }
   }
+
   async function onDownloadPDF() {
     const pdfDoc = await PDFDocument.create();
     const page = pdfDoc.addPage();
@@ -111,7 +143,7 @@ export function BugIndex() {
       if (bug.description) {
         page.drawText(`Description: ${bug.description}`, { x: 50, y: yPosition, size: fontSize });
       }
-      yPosition -= 2 * fontSize; // Add extra space between bugs
+      yPosition -= 2 * fontSize;
     });
 
     const pdfBytes = await pdfDoc.save();
@@ -123,6 +155,7 @@ export function BugIndex() {
     link.click();
   }
 
+
   return (
     <main className="bug-index">
       <h3>Bugs App</h3>
@@ -130,8 +163,41 @@ export function BugIndex() {
         <button className='add-btn' onClick={onAddBug}>Add Bug ⛐</button>
         <input className='filter-input' type="text" placeholder='Search...' onChange={onSearch} />
         <input className='filter-input' type="number" placeholder='Filter by severity...' onChange={onFilterBySeverity} />
+        <input className='filter-input' type="date" placeholder='Filter by createdAt...' onChange={onFilterByCreatedAt} />
+        <Select
+          mode="multiple"
+          style={{ width: 200 }}
+          placeholder="Filter by label..."
+          onChange={onSelectLabel}
+          value={selectedLabels}
+          options={labels.map((label) => ({
+            value: label.id,
+            label: label.title,
+          }))}
+        />
+        <input type="checkbox" onChange={(e) => setIsPaginated(e.target.checked)} /> isPaginated
+        {
+          isPaginated && (
+            <>
+              <button onClick={() => onChangePage('prev')} disabled={page === 1}>Prev</button>
+              {page}/{Math.ceil(totalBugs / pageSize)}
+              <button onClick={() => onChangePage('next')} disabled={page === Math.ceil(totalBugs / pageSize)}>Next</button>
+            </>
+          )
+        }
+        <Select
+          style={{ width: 200 }}
+          placeholder="Sort by..."
+          onChange={onSelectFilter}
+          value={sortBy}
+          options={[
+            { value: 'title', label: 'Title' },
+            { value: 'severity', label: 'Severity' },
+            { value: 'createdAt', label: 'Created At' },
+          ]}
+        />
         <button className='download-btn' onClick={onDownloadPDF}>Download PDF</button>
-        <BugList bugs={filteredBugs} onRemoveBug={onRemoveBug} onEditBug={onEditBug} />
+        <BugList bugs={filteredBugs} onRemoveBug={onRemoveBug} onEditBug={onEditBug} labels={labels} />
       </main>
     </main>
   )
