@@ -13,9 +13,7 @@ const axios = Axios.create({
 const STORAGE_KEY = 'bugDB'
 
 axios.interceptors.response.use(response => {
-    console.log('Response headers:', response.headers)
-    console.log('Set-Cookie header:', response.headers['set-cookie'])
-    console.log('All cookies:', document.cookie)
+
     return response
 })
 

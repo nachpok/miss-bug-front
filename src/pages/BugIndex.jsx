@@ -24,9 +24,7 @@ export function BugIndex() {
   }, [])
 
   useEffect(() => {
-    const filterBy = { severity, title: search, createdAt, sortBy, page, isPaginated, labels: selectedLabels }
-    console.log(filterBy)
-    loadBugs(filterBy)
+    loadBugs()
   }, [search, severity, createdAt, sortBy, page, isPaginated, selectedLabels])
 
   function onSearch(ev) {
@@ -57,7 +55,8 @@ export function BugIndex() {
     setSelectedLabels(values);
   };
 
-  async function loadBugs(filterBy = {}) {
+  async function loadBugs() {
+    const filterBy = { severity, title: search, createdAt, sortBy, page, isPaginated, labels: selectedLabels }
     const data = await bugService.query(filterBy)
     const bugs = data.bugs
     setLabels(data.labels)
@@ -70,6 +69,7 @@ export function BugIndex() {
   async function onRemoveBug(bugId) {
     try {
       await bugService.remove(bugId)
+      // loadBugs()
       console.log('Deleted Succesfully!')
       setBugs(prevBugs => prevBugs.filter((bug) => bug._id !== bugId))
       showSuccessMsg('Bug removed')
@@ -194,7 +194,7 @@ export function BugIndex() {
           ]}
         />
         <button className='download-btn' onClick={onDownloadPDF}>Download PDF</button>
-        <BugList bugs={filteredBugs} onRemoveBug={onRemoveBug} onEditBug={onEditBug} labels={labels} />
+        <BugList bugs={bugs} onRemoveBug={onRemoveBug} onEditBug={onEditBug} labels={labels} />
       </main>
     </main>
   )
