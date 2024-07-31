@@ -5,7 +5,8 @@ import { utilService } from "./util.service"
 
 const baseUrl = 'http://localhost:3030/api/bug'
 const axios = Axios.create({
-    withCredentials: true,
+    withCredentials: true, xsrfCookieName: 'XSRF-TOKEN',
+
 })
 
 
