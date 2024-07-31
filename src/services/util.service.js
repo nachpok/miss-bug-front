@@ -1,7 +1,8 @@
 export const utilService = {
     makeId,
     makeLorem,
-    getRandomIntInclusive
+    getRandomIntInclusive,
+    getCookie
 }
 
 function makeId(length = 6) {
@@ -29,4 +30,19 @@ function getRandomIntInclusive(min, max) {
     min = Math.ceil(min)
     max = Math.floor(max)
     return Math.floor(Math.random() * (max - min + 1)) + min //The maximum is inclusive and the minimum is inclusive 
+}
+
+function getCookie(name) {
+    console.log('All cookies before request:', document.cookie)
+    const value = `; ${document.cookie}`
+    const parts = value.split(`; ${name}=`)
+    if (parts.length === 2) {
+        const cookieValue = parts.pop().split(';').shift()
+        try {
+            return JSON.parse(decodeURIComponent(cookieValue))
+        } catch (e) {
+            return cookieValue // Return as-is if it's not JSON
+        }
+    }
+    return null
 }

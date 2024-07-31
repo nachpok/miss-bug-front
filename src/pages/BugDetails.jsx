@@ -10,6 +10,8 @@ import { Link } from 'react-router-dom'
 export function BugDetails() {
 
     const [bug, setBug] = useState(null)
+    const [error, setError] = useState(null)
+
     console.log(bug)
     const { bugId } = useParams()
 
@@ -20,14 +22,19 @@ export function BugDetails() {
     async function loadBug() {
         try {
             const bug = await bugService.getById(bugId)
+            console.log('bug', bug)
             setBug(bug)
         } catch (err) {
+            setError(err.message)
+
             showErrorMsg('Cannot load bug')
 
         }
     }
 
-    if (!bug) return <h1>loadings....</h1>
+
+    if (error) return <div className="error">{error}</div>
+    if (!bug) return <div>Loading...</div>
     return (
         <div className="bug-details container">
             <h3>Bug Details 🐛</h3>

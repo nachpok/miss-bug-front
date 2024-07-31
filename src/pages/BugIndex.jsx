@@ -54,14 +54,11 @@ export function BugIndex() {
   }
 
   function onSelectLabel(values) {
-    console.log('values', values)
     setSelectedLabels(values);
   };
 
   async function loadBugs(filterBy = {}) {
-    console.log('filterBy', filterBy)
     const data = await bugService.query(filterBy)
-    console.log('data', data)
     const bugs = data.bugs
     setLabels(data.labels)
     setTotalBugs(data.totalBugs)

@@ -12,6 +12,7 @@
   "dependencies": {
     "antd": "^5.19.4",
     "axios": "^1.7.2",
+    "cookies-js": "^1.2.3",
     "dayjs": "^1.11.12",
     "pdf-lib": "^1.17.1",
     "pdfkit": "^0.15.0",
