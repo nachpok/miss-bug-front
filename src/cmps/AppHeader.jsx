@@ -28,7 +28,7 @@ export function AppHeader({ user, onLogout }) {
                     {user &&
                         <>
                             |
-                            <label>{user.fullname}</label>
+                            <NavLink to="/profile">{user.fullname}</NavLink>
                         </>
                     }
                 </nav>

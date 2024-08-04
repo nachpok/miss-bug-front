@@ -11,6 +11,7 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import { UserMsg } from './cmps/UserMsg.jsx'
 import { Login } from './pages/Login.jsx'
 import { Signup } from './pages/Signup.jsx'
+import { UserIndex } from './pages/UserIndex.jsx'
 
 export function App() {
     const [user, setUser] = useState(null);
@@ -58,6 +59,7 @@ export function App() {
                         <Route path='/about' element={<AboutUs />} />
                         <Route path='/login' element={<Login onLogin={onLogin} />} />
                         <Route path='/signup' element={<Signup onSignup={onSignup} />} />
+                        <Route path='/profile' element={<UserIndex user={user} />} />
                         {/* <Route path='*' element={<Page404 />} /> */}
                     </Routes>
                 </main>
