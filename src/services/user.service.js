@@ -1,6 +1,6 @@
 import Axios from "axios"
 
-const baseUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:3030'}/api`
+const baseUrl = import.meta.env.VITE_NODE_ENV === 'development' ? 'http://localhost:3030/api' : '/api/bug'
 const axios = Axios.create({
     withCredentials: true, xsrfCookieName: 'XSRF-TOKEN',
 })
