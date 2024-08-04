@@ -27,6 +27,10 @@ export function BugIndex({ user }) {
     loadBugs()
   }, [search, severity, createdAt, sortBy, page, isPaginated, selectedLabels])
 
+  useEffect(() => {
+    console.log("user", user);
+  }, [user])
+
   function onSearch(ev) {
     setSearch(ev.target.value)
   }
@@ -99,8 +103,9 @@ export function BugIndex({ user }) {
         fullname: user.fullname
       }
     }
-
+    console.log("bug to create", bug);
     try {
+      console.log("bug to create", bug);
       const savedBug = await bugService.save(bug)
       console.log('Added Bug', savedBug)
       setBugs(prevBugs => [...prevBugs, savedBug])
@@ -170,7 +175,7 @@ export function BugIndex({ user }) {
     <main className="bug-index">
       <h3>Bugs App</h3>
       <main>
-        <button className='add-btn' onClick={onAddBug}>Add Bug ⛐</button>
+        <button className='add-btn' onClick={onAddBug} disabled={!user}>Add Bug ⛐</button>
         <input className='filter-input' type="text" placeholder='Search...' onChange={onSearch} />
         <input className='filter-input' type="number" placeholder='Filter by severity...' onChange={onFilterBySeverity} />
         <input className='filter-input' type="date" placeholder='Filter by createdAt...' onChange={onFilterByCreatedAt} />
@@ -207,7 +212,7 @@ export function BugIndex({ user }) {
           ]}
         />
         <button className='download-btn' onClick={onDownloadPDF}>Download PDF</button>
-        <BugList bugs={bugs} onRemoveBug={onRemoveBug} onEditBug={onEditBug} labels={labels} />
+        <BugList bugs={bugs} onRemoveBug={onRemoveBug} onEditBug={onEditBug} labels={labels} user={user} />
       </main>
     </main>
   )
