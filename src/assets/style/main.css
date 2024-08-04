@@ -20,7 +20,8 @@
 @import "cmps/BugList.css";
 @import "cmps/BugPreview.css";
 @import "cmps/BugDetails.css";
-
+@import "cmps/Login.css";
+@import "cmps/Signup.css";
 
 .main-app {
     display: flex;
@@ -29,6 +30,6 @@
 }
 
 
-.main-app > main {
+.main-app>main {
     flex-grow: 1;
 }

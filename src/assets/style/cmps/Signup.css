@@ -1,0 +1,21 @@
+.signup-page {
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    width: 100%;
+
+    .signup-container {
+        margin-top: 100px;
+        width: 300px;
+
+        .signup-title {
+            text-align: center;
+        }
+
+        .signup-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+}

@@ -6,7 +6,7 @@ import { useEffect } from 'react'
 import { PDFDocument, rgb } from 'pdf-lib'
 import { Select } from 'antd';
 
-export function BugIndex() {
+export function BugIndex({ user }) {
   const [bugs, setBugs] = useState([])
   const [filteredBugs, setFilteredBugs] = useState([])
   const [search, setSearch] = useState('')
@@ -56,14 +56,19 @@ export function BugIndex() {
   };
 
   async function loadBugs() {
-    const filterBy = { severity, title: search, createdAt, sortBy, page, isPaginated, labels: selectedLabels }
-    const data = await bugService.query(filterBy)
-    const bugs = data.bugs
-    setLabels(data.labels)
-    setTotalBugs(data.totalBugs)
-    setPageSize(data.pageSize)
-    setBugs(bugs)
-    setFilteredBugs(bugs)
+    try {
+      const filterBy = { severity, title: search, createdAt, sortBy, page, isPaginated, labels: selectedLabels }
+      const data = await bugService.query(filterBy)
+      const bugs = data.bugs
+      setLabels(data.labels)
+      setTotalBugs(data.totalBugs)
+      setPageSize(data.pageSize)
+      setBugs(bugs)
+      setFilteredBugs(bugs)
+    } catch (err) {
+      console.log('Error from loadBugs ->', err)
+      showErrorMsg('Cannot load bugs')
+    }
   }
 
   async function onRemoveBug(bugId) {
@@ -87,6 +92,14 @@ export function BugIndex() {
       createdAt: new Date(),
       labels: []
     }
+
+    if (user) {
+      bug.creator = {
+        _id: user._id,
+        fullname: user.fullname
+      }
+    }
+
     try {
       const savedBug = await bugService.save(bug)
       console.log('Added Bug', savedBug)

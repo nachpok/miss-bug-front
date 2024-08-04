@@ -1,0 +1,28 @@
+.login-page {
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    width: 100%;
+
+    .login-container {
+        margin-top: 100px;
+        width: 300px;
+
+        .login-title {
+            text-align: center;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .login-signup-link {
+            text-align: center;
+            color: #3a3dda;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    }
+}
