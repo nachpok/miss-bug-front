@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom'
 import { BugPreview } from './BugPreview'
 
 export function BugList({ bugs, onRemoveBug, onEditBug, labels, user }) {
+  console.log("user", user)
+
   return (
     <ul className="bug-list">
       {bugs.map((bug) => (
         <li className="bug-preview" key={bug._id}>
           <BugPreview bug={bug} labels={labels} />
-          {user && user._id === bug?.creator?._id &&
+          {user && (user._id === bug?.creator?._id || user.role === "admin") &&
             <div>
               <button
                 onClick={() => {

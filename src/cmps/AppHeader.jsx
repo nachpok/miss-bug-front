@@ -25,6 +25,12 @@ export function AppHeader({ user, onLogout }) {
                             <NavLink to="/" onClick={onLogout}>Logout</NavLink>
                         </>
                     }
+                    {user && user.role === "admin" &&
+                        <>
+                            |
+                            <NavLink to="/users">Users</NavLink>
+                        </>
+                    }
                     {user &&
                         <>
                             |

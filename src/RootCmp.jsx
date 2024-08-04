@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { userService } from './services/user.service.js';
-
+import { UserList } from './cmps/UserList.jsx';
 import { AppHeader } from './cmps/AppHeader.jsx'
 import { AppFooter } from './cmps/AppFooter.jsx'
 import { Home } from './pages/Home.jsx'
@@ -60,6 +60,7 @@ export function App() {
                         <Route path='/login' element={<Login onLogin={onLogin} />} />
                         <Route path='/signup' element={<Signup onSignup={onSignup} />} />
                         <Route path='/profile' element={<UserIndex user={user} />} />
+                        <Route path='/users' element={<UserList user={user} />} />
                         {/* <Route path='*' element={<Page404 />} /> */}
                     </Routes>
                 </main>
