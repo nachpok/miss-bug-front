@@ -1,6 +1,6 @@
 import Axios from "axios"
 import { showErrorMsg } from "../services/event-bus.service";
-const baseUrl = import.meta.env.VITE_NODE_ENV === 'development' ? 'http://localhost:3030/api' : '/api/bug'
+const baseUrl = import.meta.env.VITE_NODE_ENV === 'development' ? 'http://localhost:3030/api' : 'https://miss-bug-back.onrender.com/api'
 const axios = Axios.create({
     withCredentials: true, xsrfCookieName: 'XSRF-TOKEN',
 })
