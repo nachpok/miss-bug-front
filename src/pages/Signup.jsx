@@ -20,10 +20,12 @@ export function Signup({ onSignup }) {
         if (username && password && fullname) {
             try {
                 const res = await userService.signup({ username, password, fullname });
-                console.log("res", res);
-
+                if (res.status === 201) {
+                    onSignup(res.data);
+                    navigate('/');
+                }
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         }
     }

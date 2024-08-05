@@ -46,7 +46,8 @@ async function getById(bugId) {
 }
 
 async function remove(bugId) {
-    const res = await axios.delete(`${baseUrl}/${bugId}`)
+    const url = `${baseUrl}/${bugId}`;
+    const res = await axios.delete(url)
     return res.data
 }
 

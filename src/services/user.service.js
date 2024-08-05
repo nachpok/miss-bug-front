@@ -1,5 +1,5 @@
 import Axios from "axios"
-
+import { showErrorMsg } from "../services/event-bus.service";
 const baseUrl = import.meta.env.VITE_NODE_ENV === 'development' ? 'http://localhost:3030/api' : '/api/bug'
 const axios = Axios.create({
     withCredentials: true, xsrfCookieName: 'XSRF-TOKEN',
@@ -39,11 +39,15 @@ function logout() {
     }
 }
 
-function signup({ username, password, fullname }) {
-    console.log(username, password, fullname);
+async function signup({ username, password, fullname }) {
+    console.log("signup.service.js");
     try {
-        return axios.post(`${baseUrl}/auth/signup`, { username, password, fullname });
+        const singupRes = await axios.post(`${baseUrl}/auth/signup`, { username, password, fullname });
+        return singupRes
     } catch (error) {
+        if (error?.response?.status === 409) {
+            showErrorMsg("Username already exists");
+        }
         console.log(error);
     }
 }

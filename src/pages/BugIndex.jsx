@@ -76,9 +76,9 @@ export function BugIndex({ user }) {
   }
 
   async function onRemoveBug(bugId) {
+    console.log("On remove bug", bugId);
     try {
       await bugService.remove(bugId)
-      // loadBugs()
       console.log('Deleted Succesfully!')
       setBugs(prevBugs => prevBugs.filter((bug) => bug._id !== bugId))
       showSuccessMsg('Bug removed')

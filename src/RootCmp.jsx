@@ -42,11 +42,6 @@ export function App() {
         userService.logout();
     }
 
-    function onSignup(user) {
-        setUser(user);
-        sessionStorage.setItem('loggedInUser', JSON.stringify(user));
-    }
-
     return (
         <Router>
             <div className='main-app'>
@@ -58,7 +53,7 @@ export function App() {
                         <Route path='/bug/:bugId' element={<BugDetails />} />
                         <Route path='/about' element={<AboutUs />} />
                         <Route path='/login' element={<Login onLogin={onLogin} />} />
-                        <Route path='/signup' element={<Signup onSignup={onSignup} />} />
+                        <Route path='/signup' element={<Signup onSignup={onLogin} />} />
                         <Route path='/profile' element={<UserIndex user={user} />} />
                         <Route path='/users' element={<UserList user={user} />} />
                         {/* <Route path='*' element={<Page404 />} /> */}
