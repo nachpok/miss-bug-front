@@ -16,6 +16,7 @@ export const userService = {
 
 function login(username, password) {
     try {
+        console.log("login.service.js baseUrl", baseUrl);
         return axios.post(`${baseUrl}/auth/login`, { username, password });
     } catch (error) {
         console.log(error);
