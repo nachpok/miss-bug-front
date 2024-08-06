@@ -3,11 +3,8 @@
 import Axios from "axios"
 import { utilService } from "./util.service"
 
-const baseUrl = import.meta.env.VITE_APP_URL + '/api/bug'
+const baseUrl = import.meta.env.VITE_ENV === 'development' ? 'http://localhost:3030/api/bug' : '/api/bug'
 
-if (baseUrl ==='/api/bug') {
-   throw new Error('VITE_APP_URL is not set')
-}
 const axios = Axios.create({
     withCredentials: true, xsrfCookieName: 'XSRF-TOKEN',
 })
@@ -34,7 +31,7 @@ async function query(filterBy = {}) {
 
 async function getById(bugId) {
     try {
-        const res = await axios.get(`${baseUrl}/${bugId}`)
+        const res = await axios.get( `${baseUrl}/${bugId}`)
         return res.data
     } catch (error) {
         if (error.response && error.response.status === 403) {
@@ -50,8 +47,9 @@ async function getById(bugId) {
 }
 
 async function remove(bugId) {
-    const url = `${baseUrl}/${bugId}`;
+    const url =  `${baseUrl}/${bugId}`;
     const res = await axios.delete(url)
+    console.log("bugService remove", res)
     return res.data
 }
 
@@ -60,7 +58,7 @@ async function save(bug) {
         const res = await axios.put(`${baseUrl}/${bug._id}`, bug)
         return res.data
     } else {
-        const res = await axios.post(baseUrl, bug)
+        const res = await axios.post(`${baseUrl}`, bug)
         return res.data
     }
 }

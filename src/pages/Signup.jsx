@@ -24,8 +24,8 @@ export function Signup({ onSignup }) {
                     onSignup(res.data);
                     navigate('/');
                 }
-            } catch (error) {
-                console.error(error);
+            } catch (e) {
+                console.error(e);
             }
         }
     }
@@ -40,7 +40,7 @@ export function Signup({ onSignup }) {
                     <Input type="password" placeholder="Password" className='signup-input' name="password" />
                     <button type="submit" className='signup-button'>Signup</button>
                 </form>
-                {error && <p className='signup-error'>{error}</p>}
+                {/* {error && <p className='signup-error'>{error}</p>} */}
             </article>
         </section>
     )
