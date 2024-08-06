@@ -1,6 +1,14 @@
 import Axios from "axios"
 import { showErrorMsg } from "../services/event-bus.service";
-const baseUrl = import.meta.env.VITE_NODE_ENV === 'development' ? 'http://localhost:3030/api' : 'https://miss-bug-back.onrender.com/api'
+//TODO replace env var name
+const baseUrl = import.meta.env.VITE_APP_URL + '/api'
+
+if (baseUrl ==='/api') {
+   throw new Error('VITE_APP_URL is not set')
+}
+
+// const baseUrl = 'https://miss-bug-back.onrender.com/api/bug'
+
 const axios = Axios.create({
     withCredentials: true, xsrfCookieName: 'XSRF-TOKEN',
 })

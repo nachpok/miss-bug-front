@@ -185,6 +185,7 @@ export function BugIndex({ user }) {
           placeholder="Filter by label..."
           onChange={onSelectLabel}
           value={selectedLabels}
+          allowClear={true}
           options={labels.map((label) => ({
             value: label.id,
             label: label.title,
@@ -205,6 +206,7 @@ export function BugIndex({ user }) {
           placeholder="Sort by..."
           onChange={onSelectFilter}
           value={sortBy}
+          allowClear={true}
           options={[
             { value: 'title', label: 'Title' },
             { value: 'severity', label: 'Severity' },
