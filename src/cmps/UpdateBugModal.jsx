@@ -7,13 +7,13 @@ export function UpdateBugModal({ updateBug, bug, labels }) {
   const [newBug, setNewBug] = useState({ ...bug });
   const [selectedLabels, setSelectedLabels] = useState(bug.labels || []);
 
-  const defaultLabels =
-    labels
-      .filter((label) => bug.labelIds?.includes(label.id))
-      .map((label) => ({
-        value: label.id,
-        label: label.title,
-      })) || [];
+  // const defaultLabels =
+  //   labels
+  //     .filter((label) => bug.labelIds?.includes(label.id))
+  //     .map((label) => ({
+  //       value: label.id,
+  //       label: label.title,
+  //     })) || [];
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -83,7 +83,7 @@ export function UpdateBugModal({ updateBug, bug, labels }) {
             onChange={setSelectedLabels}
             allowClear={true}
             defaultValue={bug.labels}
-            options={labels.map((label) => ({
+            options={labels?.map((label) => ({
               value: label.id,
               label: label.title,
             }))}

@@ -4,16 +4,23 @@ import { useState, useEffect } from "react";
 
 export function UserIndex({ user }) {
   const [userBugs, setUserBugs] = useState([]);
-  async function loadUserBugs() {
-    if (!user) return <>Missing user</>;
-    const filterBy = { creator: user._id };
-    const data = await bugService.query(filterBy);
-    setUserBugs(data.bugs);
-  }
   useEffect(() => {
-    loadUserBugs();
+    if (user) {
+      loadUserBugs();
+    }
   }, [user]);
 
+  async function loadUserBugs() {
+    const filterBy = { creator: user._id };
+    try {
+      const data = await bugService.query(filterBy);
+      setUserBugs(data.bugs);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  if (!user) return <>Missing user</>;
   return (
     <div>
       <h1>{user?.fullname}</h1>
