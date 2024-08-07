@@ -56,9 +56,12 @@ async function remove(bugId) {
 async function save(bug) {
     if (bug._id) {
         const res = await axios.put(`${baseUrl}/${bug._id}`, bug)
+        console.log("bugService save", res)
         return res.data
     } else {
         const res = await axios.post(`${baseUrl}`, bug)
+        console.log("bugService save", res)
+
         return res.data
     }
 }
