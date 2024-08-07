@@ -33,7 +33,6 @@ function getRandomIntInclusive(min, max) {
 }
 
 function getCookie(name) {
-    console.log('All cookies before request:', document.cookie)
     const value = `; ${document.cookie}`
     const parts = value.split(`; ${name}=`)
     if (parts.length === 2) {

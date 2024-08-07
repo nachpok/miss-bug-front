@@ -7,4 +7,16 @@
     margin: 0;
     margin-top: 10px;
     margin-left: 10px;
+    width: 200px;
+}
+
+.is-paginated {
+    margin: 0;
+    margin: 10px;
+}
+
+.download-btn {
+    margin: 0;
+    margin-top: 10px;
+    margin-left: 10px;
 }

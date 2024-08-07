@@ -4,13 +4,13 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-}
 
-.bug-preview h4 {
-    text-transform: capitalize;
-    color: black;
-}
+    h4 {
+        text-transform: capitalize;
+        color: black;
+    }
 
-.bug-preview img {
-    max-width: 100px;
+    img {
+        max-width: 100px;
+    }
 }

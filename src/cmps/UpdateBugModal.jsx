@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Input, Select, Modal, Form } from "antd";
 import dayjs from "dayjs";
 
-export function UpdateBug({ updateBug, bug, labels }) {
+export function UpdateBugModal({ updateBug, bug, labels }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newBug, setNewBug] = useState({ ...bug });
   const [selectedLabels, setSelectedLabels] = useState(bug.labels || []);
@@ -33,7 +33,6 @@ export function UpdateBug({ updateBug, bug, labels }) {
       return;
     }
     updateBug({ ...bug, ...newBug, labels: selectedLabels });
-    console.log("updated bug", dayjs(bug.createdAt).format("DD/MM/YYYY"));
     handleCancel();
   };
 

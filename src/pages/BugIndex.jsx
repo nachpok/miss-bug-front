@@ -4,8 +4,9 @@ import { BugList } from "../cmps/BugList.jsx";
 import { useState } from "react";
 import { useEffect } from "react";
 import { PDFDocument, rgb } from "pdf-lib";
-import { Select } from "antd";
-import { AddBug } from "../cmps/AddBug.jsx";
+import { Select, Checkbox, Input } from "antd";
+import { AddBugModal } from "../cmps/AddBugModal.jsx";
+import dayjs from "dayjs";
 
 export function BugIndex({ user }) {
   const [bugs, setBugs] = useState([]);
@@ -27,10 +28,6 @@ export function BugIndex({ user }) {
   useEffect(() => {
     loadBugs();
   }, [search, severity, createdAt, sortBy, page, isPaginated, selectedLabels]);
-
-  useEffect(() => {
-    console.log("user", user);
-  }, [user]);
 
   function onSearch(ev) {
     setSearch(ev.target.value);
@@ -84,10 +81,8 @@ export function BugIndex({ user }) {
   }
 
   async function onRemoveBug(bugId) {
-    console.log("On remove bug", bugId);
     try {
       await bugService.remove(bugId);
-      console.log("Deleted Succesfully!");
       setBugs((prevBugs) => prevBugs.filter((bug) => bug._id !== bugId));
       showSuccessMsg("Bug removed");
     } catch (err) {
@@ -109,7 +104,6 @@ export function BugIndex({ user }) {
     try {
       const res = await bugService.save(bug);
       if (res.message === "Bug added") {
-        console.log("res", res);
         setBugs((prevBugs) => [...prevBugs, res.bug]);
         showSuccessMsg("Bug added");
       }
@@ -122,7 +116,6 @@ export function BugIndex({ user }) {
   async function onEditBug(bug) {
     try {
       const res = await bugService.save(bug);
-
       if (res.message === "Bug updated") {
         setBugs((prevBugs) =>
           prevBugs.map((currBug) =>
@@ -160,19 +153,50 @@ export function BugIndex({ user }) {
         y: yPosition,
         size: fontSize,
       });
-      yPosition -= fontSize;
+      yPosition -= fontSize * 1.5;
       page.drawText(`Severity: ${bug.severity}`, {
         x: 50,
         y: yPosition,
         size: fontSize,
       });
-      yPosition -= fontSize;
+      yPosition -= fontSize * 1.5;
       if (bug.description) {
         page.drawText(`Description: ${bug.description}`, {
           x: 50,
           y: yPosition,
           size: fontSize,
         });
+        yPosition -= fontSize * 1.5;
+      }
+      if (bug.labels) {
+        page.drawText(
+          `Labels: ${bug.labels.map((label) => label.title).join(", ")}`,
+          {
+            x: 50,
+            y: yPosition,
+            size: fontSize,
+          }
+        );
+        yPosition -= fontSize * 1.5;
+      }
+      if (bug.creator) {
+        page.drawText(`Creator: ${bug.creator.fullname}`, {
+          x: 50,
+          y: yPosition,
+          size: fontSize,
+        });
+        yPosition -= fontSize * 1.5;
+      }
+      if (bug.createdAt) {
+        page.drawText(
+          `Created At: ${dayjs(bug.createdAt).format("DD/MM/YYYY")}`,
+          {
+            x: 50,
+            y: yPosition,
+            size: fontSize,
+          }
+        );
+        yPosition -= fontSize * 1.5;
       }
       yPosition -= 2 * fontSize;
     });
@@ -190,31 +214,30 @@ export function BugIndex({ user }) {
     <main className="bug-index">
       <h3>Bugs App</h3>
       <main>
-        {user && (
-          // <button className="add-btn" onClick={onAddBug} disabled={!user}>
-          //   Add Bug ⛐
-          // </button>
-          <AddBug addBug={onAddBug} labels={labels} />
-        )}
-        <input
+        {user && <AddBugModal addBug={onAddBug} labels={labels} />}
+        <button className="download-btn" onClick={onDownloadPDF}>
+          Download PDF
+        </button>
+        <Input
           className="filter-input"
           type="text"
           placeholder="Search..."
           onChange={onSearch}
         />
-        <input
+        <Input
           className="filter-input"
           type="number"
           placeholder="Filter by severity..."
           onChange={onFilterBySeverity}
         />
-        <input
+        <Input
           className="filter-input"
           type="date"
           placeholder="Filter by createdAt..."
           onChange={onFilterByCreatedAt}
         />
         <Select
+          className="filter-input"
           mode="multiple"
           style={{ width: 200 }}
           placeholder="Filter by label..."
@@ -226,26 +249,8 @@ export function BugIndex({ user }) {
             label: label.title,
           }))}
         />
-        <input
-          type="checkbox"
-          onChange={(e) => setIsPaginated(e.target.checked)}
-        />{" "}
-        isPaginated
-        {isPaginated && (
-          <>
-            <button onClick={() => onChangePage("prev")} disabled={page === 1}>
-              Prev
-            </button>
-            {page}/{Math.ceil(totalBugs / pageSize)}
-            <button
-              onClick={() => onChangePage("next")}
-              disabled={page === Math.ceil(totalBugs / pageSize)}
-            >
-              Next
-            </button>
-          </>
-        )}
         <Select
+          className="filter-input"
           style={{ width: 200 }}
           placeholder="Sort by..."
           onChange={onSelectFilter}
@@ -257,9 +262,28 @@ export function BugIndex({ user }) {
             { value: "createdAt", label: "Created At" },
           ]}
         />
-        <button className="download-btn" onClick={onDownloadPDF}>
-          Download PDF
-        </button>
+        <label className="is-paginated">
+          <Checkbox
+            onChange={(e) => setIsPaginated(e.target.checked)}
+            className="is-paginated"
+          />
+          isPaginated
+        </label>
+        {isPaginated && (
+          <label className="filter-input">
+            <button onClick={() => onChangePage("prev")} disabled={page === 1}>
+              Prev
+            </button>
+            {page}/{Math.ceil(totalBugs / pageSize)}
+            <button
+              onClick={() => onChangePage("next")}
+              disabled={page === Math.ceil(totalBugs / pageSize)}
+            >
+              Next
+            </button>
+          </label>
+        )}
+
         <BugList
           bugs={bugs}
           onRemoveBug={onRemoveBug}

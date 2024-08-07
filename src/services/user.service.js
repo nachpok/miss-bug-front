@@ -44,7 +44,6 @@ function logout() {
 }
 
 async function signup({ username, password, fullname }) {
-    console.log("signup.service.js");
     try {
         const singupRes = await axios.post(baseUrl + `/auth/signup`, { username, password, fullname });
         return singupRes

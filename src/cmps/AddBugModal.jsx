@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Input, Select, Modal, Form } from "antd";
 
-export function AddBug({ addBug, labels }) {
+export function AddBugModal({ addBug, labels }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [bug, setBug] = useState({
     title: "",
