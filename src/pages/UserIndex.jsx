@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 export function UserIndex({ user }) {
   const [userBugs, setUserBugs] = useState([]);
   async function loadUserBugs() {
-    if (!user) return;
+    if (!user) return <>Missing user</>;
     const filterBy = { creator: user._id };
     const data = await bugService.query(filterBy);
     setUserBugs(data.bugs);
