@@ -97,15 +97,6 @@ export function BugIndex({ user }) {
   }
 
   async function onAddBug(bug) {
-    console.log("bug to create", bug);
-    // const bug = {
-    //   title: prompt("Bug title?"),
-    //   severity: +prompt("Bug severity?"),
-    //   description: prompt("Bug description?"),
-    //   createdAt: new Date(),
-    //   labels: [],
-    // };
-
     if (user) {
       bug.creator = {
         _id: user._id,
@@ -129,17 +120,8 @@ export function BugIndex({ user }) {
   }
 
   async function onEditBug(bug) {
-    const severity = +prompt("New severity?");
-    const title = prompt("New title?");
-    const description = prompt("New description?");
-
-    const bugToSave = { ...bug };
-    if (severity) bugToSave.severity = severity;
-    if (title) bugToSave.title = title;
-    if (description) bugToSave.description = description;
-
     try {
-      const res = await bugService.save(bugToSave);
+      const res = await bugService.save(bug);
 
       if (res.message === "Bug updated") {
         setBugs((prevBugs) =>

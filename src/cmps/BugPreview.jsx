@@ -15,7 +15,7 @@ export function BugPreview({ bug, labels }) {
         Labels:{" "}
         <span>
           {labels
-            ?.filter((label) => bug.labelIds?.includes(label.id))
+            ?.filter((label) => bug.labels?.includes(label.id))
             ?.map((label) => label.title)
             .join(", ")}
         </span>

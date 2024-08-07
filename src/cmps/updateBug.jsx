@@ -1,9 +1,19 @@
 import { useState } from "react";
 import { Input, Select, Modal, Form } from "antd";
+import dayjs from "dayjs";
 
 export function UpdateBug({ updateBug, bug, labels }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newBug, setNewBug] = useState(bug);
+  const [newBug, setNewBug] = useState({ ...bug });
+  const [selectedLabels, setSelectedLabels] = useState(bug.labels || []);
+
+  const defaultLabels =
+    labels
+      .filter((label) => bug.labelIds?.includes(label.id))
+      .map((label) => ({
+        value: label.id,
+        label: label.title,
+      })) || [];
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -15,29 +25,23 @@ export function UpdateBug({ updateBug, bug, labels }) {
 
   const handleCancel = () => {
     setIsModalOpen(false);
-    setNewBug({
-      title: "",
-      description: "",
-      severity: "",
-      labels: [],
-    });
+    setNewBug(null);
   };
 
   const handleSubmit = () => {
-    if (!bug.title || !bug.description || !bug.severity) {
+    if (!newBug.title || !newBug.description || !newBug.severity) {
       return;
     }
-    updateBug(bug);
+    updateBug({ ...bug, ...newBug, labels: selectedLabels });
+    console.log("updated bug", dayjs(bug.createdAt).format("DD/MM/YYYY"));
     handleCancel();
   };
 
   return (
     <>
-      <button className="add-btn" onClick={showModal}>
-        Add Bug ⛐
-      </button>
+      <button onClick={showModal}>Edit</button>
       <Modal
-        title="Add Bug"
+        title="Update Bug"
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -47,7 +51,7 @@ export function UpdateBug({ updateBug, bug, labels }) {
           <Input
             type="Add a bug"
             placeholder="Title"
-            value={bug.title}
+            defaultValue={bug.title}
             onChange={(e) => setNewBug({ ...newBug, title: e.target.value })}
             required
             rules={[{ required: true, message: "Please enter a title" }]}
@@ -56,7 +60,7 @@ export function UpdateBug({ updateBug, bug, labels }) {
           <Input
             type="text"
             placeholder="Description"
-            value={bug.description}
+            defaultValue={bug.description}
             onChange={(e) =>
               setNewBug({ ...newBug, description: e.target.value })
             }
@@ -67,7 +71,7 @@ export function UpdateBug({ updateBug, bug, labels }) {
           <Input
             type="number"
             placeholder="Severity"
-            value={bug.severity}
+            defaultValue={bug.severity}
             onChange={(e) => setNewBug({ ...newBug, severity: e.target.value })}
             required
             rules={[{ required: true, message: "Please enter a severity" }]}
@@ -77,14 +81,15 @@ export function UpdateBug({ updateBug, bug, labels }) {
             mode="multiple"
             style={{ width: 200 }}
             placeholder="Filter by label..."
-            onChange={(e) => setNewBug({ ...newBug, labels: e })}
+            onChange={setSelectedLabels}
             allowClear={true}
+            defaultValue={bug.labels}
             options={labels.map((label) => ({
               value: label.id,
               label: label.title,
             }))}
           />
-          <button onClick={handleSubmit}>Add Bug</button>
+          <button onClick={handleSubmit}>Update Bug</button>
         </Form>
       </Modal>
     </>
