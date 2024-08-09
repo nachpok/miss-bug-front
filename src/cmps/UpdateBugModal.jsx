@@ -1,19 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input, Select, Modal, Form } from "antd";
-import dayjs from "dayjs";
 
 export function UpdateBugModal({ updateBug, bug, labels }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newBug, setNewBug] = useState({ ...bug });
+  const [newBug, setNewBug] = useState(null);
   const [selectedLabels, setSelectedLabels] = useState(bug.labels || []);
 
-  // const defaultLabels =
-  //   labels
-  //     .filter((label) => bug.labelIds?.includes(label.id))
-  //     .map((label) => ({
-  //       value: label.id,
-  //       label: label.title,
-  //     })) || [];
+  useEffect(() => {
+    setNewBug({ ...bug });
+  }, []);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -25,16 +20,25 @@ export function UpdateBugModal({ updateBug, bug, labels }) {
 
   const handleCancel = () => {
     setIsModalOpen(false);
-    setNewBug(null);
   };
 
   const handleSubmit = () => {
+    console.log("newBug: ", newBug);
     if (!newBug.title || !newBug.description || !newBug.severity) {
       return;
     }
     updateBug({ ...bug, ...newBug, labels: selectedLabels });
     handleCancel();
   };
+
+  const options = labels.map((label) => ({
+    value: label,
+    label: label,
+  }));
+
+  const defaultValue = options.filter((option) =>
+    bug.labels?.includes(option.value)
+  );
 
   return (
     <>
@@ -82,11 +86,8 @@ export function UpdateBugModal({ updateBug, bug, labels }) {
             placeholder="Filter by label..."
             onChange={setSelectedLabels}
             allowClear={true}
-            defaultValue={bug.labels}
-            options={labels?.map((label) => ({
-              value: label.id,
-              label: label.title,
-            }))}
+            defaultValue={defaultValue}
+            options={options}
           />
           <button onClick={handleSubmit}>Update Bug</button>
         </Form>

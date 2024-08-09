@@ -25,7 +25,6 @@ export const bugService = {
 };
 
 async function query(filterBy = {}) {
-  console.log("service filter: ", filterBy);
   try {
     return await httpService.get(`bug`, filterBy);
   } catch (e) {
@@ -53,7 +52,6 @@ async function getById(bugId) {
 }
 
 async function remove(bugId) {
-  const url = `${baseUrl}/${bugId}`;
   const res = await httpService.delete(`bug/${bugId}`);
   return res;
 }
@@ -61,7 +59,7 @@ async function remove(bugId) {
 async function save(bug) {
   if (bug._id) {
     const res = await httpService.put(`bug/${bug._id}`, bug);
-    return res.data;
+    return res;
   } else {
     const res = await axios.post(`${baseUrl}`, bug);
     console.log("bugService save", res);

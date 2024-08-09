@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Input, Select, Modal, Form } from "antd";
 
 export function AddBugModal({ addBug, labels }) {
+  console.log("labels: ", labels);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [bug, setBug] = useState({
     title: "",
@@ -83,8 +84,8 @@ export function AddBugModal({ addBug, labels }) {
             onChange={(e) => setBug({ ...bug, labels: e })}
             allowClear={true}
             options={labels.map((label) => ({
-              value: label.id,
-              label: label.title,
+              value: label,
+              label: label,
             }))}
           />
           <button onClick={handleSubmit}>Add Bug</button>

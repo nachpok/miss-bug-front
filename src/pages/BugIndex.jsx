@@ -3,7 +3,7 @@ import { showSuccessMsg, showErrorMsg } from "../services/event-bus.service.js";
 import { BugList } from "../cmps/BugList.jsx";
 import { useState } from "react";
 import { useEffect } from "react";
-import { PDFDocument, rgb } from "pdf-lib";
+import { PDFDocument, rgb, values } from "pdf-lib";
 import { Select, Checkbox, Input } from "antd";
 import { AddBugModal } from "../cmps/AddBugModal.jsx";
 import dayjs from "dayjs";
@@ -14,11 +14,9 @@ export function BugIndex({ user }) {
   const [severity, setSeverity] = useState("");
   const [createdAt, setCreatedAt] = useState("");
   const [sortBy, setSortBy] = useState("");
-  const [isPaginated, setIsPaginated] = useState(false);
   const [pageIdx, setPageIdx] = useState(0);
   const [totalBugs, setTotalBugs] = useState(0);
   const [pageSize, setPageSize] = useState(5);
-  const [hasNextPage, setHasNextPge] = useState(null);
   const [labels, setLabels] = useState([]);
   const [selectedLabels, setSelectedLabels] = useState([]);
 
@@ -69,13 +67,10 @@ export function BugIndex({ user }) {
         labels: selectedLabels,
       };
       const data = await bugService.query(filterBy);
-      console.log("DATA: ", data);
-      const bugs = data.bugs;
       setLabels(data.labels);
       setTotalBugs(data.totalBugs);
       setPageSize(data.pageSize);
-      setHasNextPge(data.hasNextPage);
-      setBugs(bugs);
+      setBugs(data.bugs);
     } catch (err) {
       console.log("Error from loadBugs ->", err);
       showErrorMsg("Cannot load bugs");
@@ -105,8 +100,12 @@ export function BugIndex({ user }) {
 
     try {
       const res = await bugService.save(bug);
+      console.log("res: ", res);
       if (res.message === "Bug added") {
-        setBugs((prevBugs) => [...prevBugs, res.bug]);
+        setBugs((prevBugs) => [
+          ...prevBugs,
+          { ...bug, _id: res.bug.insertedId },
+        ]);
         showSuccessMsg("Bug added");
       }
     } catch (err) {
@@ -115,13 +114,16 @@ export function BugIndex({ user }) {
     }
   }
 
-  async function onEditBug(bug) {
+  async function onUpdateBug(bug) {
+    console.log("update bug: ", bug);
     try {
       const res = await bugService.save(bug);
+      const newBug = { ...bug, ...res.bug };
+      console.log("RES: ", newBug);
       if (res.message === "Bug updated") {
         setBugs((prevBugs) =>
           prevBugs.map((currBug) =>
-            currBug._id === res.bug._id ? res.bug : currBug
+            currBug._id === newBug._id ? newBug : currBug
           )
         );
         showSuccessMsg("Bug updated");
@@ -247,8 +249,8 @@ export function BugIndex({ user }) {
           value={selectedLabels}
           allowClear={true}
           options={labels.map((label) => ({
-            value: label.id,
-            label: label.title,
+            value: label,
+            label: label,
           }))}
         />
         <Select
@@ -279,7 +281,7 @@ export function BugIndex({ user }) {
         <BugList
           bugs={bugs}
           onRemoveBug={onRemoveBug}
-          onEditBug={onEditBug}
+          onEditBug={onUpdateBug}
           labels={labels}
           user={user}
         />

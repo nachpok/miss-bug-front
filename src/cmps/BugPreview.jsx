@@ -12,13 +12,7 @@ export function BugPreview({ bug, labels }) {
         Created At: <span>{dayjs(bug.createdAt).format("DD/MM/YYYY")}</span>
       </p>
       <p>
-        Labels:{" "}
-        <span>
-          {labels
-            ?.filter((label) => bug.labels?.includes(label.id))
-            ?.map((label) => label.title)
-            .join(", ")}
-        </span>
+        Labels: <span>{bug?.labels?.join(", ")}</span>
       </p>
     </article>
   );
