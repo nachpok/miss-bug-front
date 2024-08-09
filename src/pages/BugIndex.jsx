@@ -14,10 +14,11 @@ export function BugIndex({ user }) {
   const [severity, setSeverity] = useState("");
   const [createdAt, setCreatedAt] = useState("");
   const [sortBy, setSortBy] = useState("");
-  const [totalBugs, setTotalBugs] = useState(0);
   const [isPaginated, setIsPaginated] = useState(false);
-  const [page, setPage] = useState(1);
+  const [pageIdx, setPageIdx] = useState(0);
+  const [totalBugs, setTotalBugs] = useState(0);
   const [pageSize, setPageSize] = useState(5);
+  const [hasNextPage, setHasNextPge] = useState(null);
   const [labels, setLabels] = useState([]);
   const [selectedLabels, setSelectedLabels] = useState([]);
 
@@ -27,7 +28,7 @@ export function BugIndex({ user }) {
 
   useEffect(() => {
     loadBugs();
-  }, [search, severity, createdAt, sortBy, page, isPaginated, selectedLabels]);
+  }, [search, severity, createdAt, sortBy, pageIdx, selectedLabels]);
 
   function onSearch(ev) {
     setSearch(ev.target.value);
@@ -46,10 +47,10 @@ export function BugIndex({ user }) {
   }
 
   function onChangePage(ev) {
-    if (ev === "next" && page < Math.ceil(totalBugs / pageSize)) {
-      setPage(page + 1);
-    } else if (ev === "prev" && page > 1) {
-      setPage(page - 1);
+    if (ev === "next" && pageIdx < Math.ceil(totalBugs / pageSize) - 1) {
+      setPageIdx((prev) => prev + 1);
+    } else if (ev === "prev" && pageIdx > 0) {
+      setPageIdx((prev) => prev - 1);
     }
   }
 
@@ -64,15 +65,16 @@ export function BugIndex({ user }) {
         title: search,
         createdAt,
         sortBy,
-        page,
-        isPaginated,
+        pageIdx,
         labels: selectedLabels,
       };
       const data = await bugService.query(filterBy);
+      console.log("DATA: ", data);
       const bugs = data.bugs;
       setLabels(data.labels);
       setTotalBugs(data.totalBugs);
       setPageSize(data.pageSize);
+      setHasNextPge(data.hasNextPage);
       setBugs(bugs);
     } catch (err) {
       console.log("Error from loadBugs ->", err);
@@ -262,28 +264,18 @@ export function BugIndex({ user }) {
             { value: "createdAt", label: "Created At" },
           ]}
         />
-        <label className="is-paginated">
-          <Checkbox
-            onChange={(e) => setIsPaginated(e.target.checked)}
-            className="is-paginated"
-          />
-          isPaginated
+        <label className="filter-input">
+          <button onClick={() => onChangePage("prev")} disabled={pageIdx === 0}>
+            Prev
+          </button>
+          {pageIdx + 1}
+          <button
+            onClick={() => onChangePage("next")}
+            disabled={totalBugs <= pageSize}
+          >
+            Next
+          </button>
         </label>
-        {isPaginated && (
-          <label className="filter-input">
-            <button onClick={() => onChangePage("prev")} disabled={page === 1}>
-              Prev
-            </button>
-            {page}/{Math.ceil(totalBugs / pageSize)}
-            <button
-              onClick={() => onChangePage("next")}
-              disabled={page === Math.ceil(totalBugs / pageSize)}
-            >
-              Next
-            </button>
-          </label>
-        )}
-
         <BugList
           bugs={bugs}
           onRemoveBug={onRemoveBug}
